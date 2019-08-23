@@ -1,0 +1,123 @@
+// FUNCTION addCustomCellValues
+// Purpose - When a record is created, add some values to specific cells to help with calculations and good record keeping
+// Parameters - Sheet with records to modify, Cell to add value to, Value to add
+
+
+function addCustomCellValues(SheetName){
+
+  // specify the sheet to work with
+  var SheetToMod = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SheetName);
+  var NumberOfRows = SheetToMod.getLastRow();
+  
+  //Loop through every sheet value
+  for(var i = 0; i < NumberOfRows; i++){
+      
+      // Get the active cell row
+      var active_range = SheetToMod.getActiveRange();
+      var selectedCell = SheetToMod.getRange(active_range.getRowIndex(), 1);
+      // Get the value of the first cell in the row for comparing
+      var FirstColumOfActiveRow = selectedCell.offset(0,0);
+      var ValueOfFirstColCell = FirstColumOfActiveRow.getValue()
+      // Get the active row number for the formulas      
+      var RowNumber = active_range.getRow();
+       
+      
+      // Insert Number of Days Since Last Visit
+      var CellColumn_DaysSince = 19;
+      var CellColumn_LastVisit = 18
+      var CellColumnLetter_LastVisit = convertColumnIndexToLetter(CellColumn_LastVisit);
+      var Value_DaysSince = "=(ROUND(TODAY()-"+CellColumnLetter_LastVisit+RowNumber+"))";
+      var CellColumnInsert_DaysSince = selectedCell.offset(0,CellColumn_DaysSince-1); 
+      if(CellColumnInsert_DaysSince.isBlank() && ValueOfFirstColCell !== ""){
+        CellColumnInsert_DaysSince.setValue(Value_DaysSince);
+        };
+
+      // Insert Message for Number of Days Since Last Visit
+      var CellColumn_DaysMessage = 20;
+      var CellColumnLetter_DaysSince = convertColumnIndexToLetter(CellColumn_DaysSince);
+      var Value_DaysMessage = "=concatenate(\"Contacted \","+CellColumnLetter_DaysSince+RowNumber+",\" days ago\")"; 
+      var CellColumnInsert_DaysMessage = selectedCell.offset(0,CellColumn_DaysMessage-1); 
+      if(CellColumnInsert_DaysMessage.isBlank() && ValueOfFirstColCell !== ""){
+        CellColumnInsert_DaysMessage.setValue(Value_DaysMessage);
+        };
+
+      //Add a value to the State Column
+      // var newState = "Utah";
+      // var cellToChange2 = selectedCell.offset(0,14 );
+      // if(cellToChange2.isBlank() && ValueOfFirstColCell !== ""){
+      // cellToChange2.setValue(newState);
+      //  };
+      
+      //Add a value to the Interest Level Column if none exists to uncategorizd
+      var CellColumn_InterestLevel = 17
+      var CellColumnInsert_InterestLevel = selectedCell.offset(0,CellColumn_InterestLevel-1);
+      var newInterestLevel = "Uncategorized";
+      if(CellColumnInsert_InterestLevel.isBlank() && ValueOfFirstColCell !== ""){
+        CellColumnInsert_InterestLevel.setValue(newInterestLevel);
+        };
+    
+      
+      //Add generic image to profile if none exists
+      var CellColumn_ProfileImage = 22
+      var CellColumnInsert_ProfileImage = selectedCell.offset(0,CellColumn_ProfileImage-1);
+      var CellColumn_Gender = 6
+      var CellColumnInsert_Gender = selectedCell.offset(0,CellColumn_Gender-1);
+      var GenericProfileMale = "https://drive.google.com/open?id=1eJhlVAQCjRIpQrVUAFNrExCoRzXRUX1O";
+      var GenericProfileFemale = "https://drive.google.com/open?id=1lVkgPNi33T66VtH8x6PR3L47gkai5p7A";
+      var GenericProfileImage = "https://drive.google.com/open?id=1Mkwau7_d0zQuRm497jV8CcBsWS488_7E";
+      var ValueOfGenderColCell = CellColumnInsert_Gender.getValue()
+      var ValueOfProfilePic = CellColumnInsert_ProfileImage.getValue()
+      
+      if(CellColumnInsert_ProfileImage.isBlank() && ValueOfFirstColCell !== "" && ValueOfGenderColCell == "Male"){
+        CellColumnInsert_ProfileImage.setValue(GenericProfileMale);
+      };
+      
+      if(ValueOfProfilePic == GenericProfileImage && ValueOfGenderColCell == "Male"){
+        CellColumnInsert_ProfileImage.setValue(GenericProfileMale);
+      };
+      
+      if(ValueOfGenderColCell == "Male" && ValueOfProfilePic == GenericProfileFemale){
+        CellColumnInsert_ProfileImage.setValue(GenericProfileMale);
+      };
+      
+      if(CellColumnInsert_ProfileImage.isBlank() && ValueOfFirstColCell !== ""  && ValueOfGenderColCell == "Female"){
+        CellColumnInsert_ProfileImage.setValue(GenericProfileFemale);
+      }; 
+
+      if(ValueOfProfilePic == GenericProfileImage && ValueOfGenderColCell == "Female"){
+        CellColumnInsert_ProfileImage.setValue(GenericProfileFemale);
+      };
+      
+      if(ValueOfGenderColCell == "Female" && ValueOfProfilePic == GenericProfileMale){
+        CellColumnInsert_ProfileImage.setValue(GenericProfileFemale);
+      };
+      
+      if(CellColumnInsert_ProfileImage.isBlank() && ValueOfFirstColCell !== ""  && ValueOfGenderColCell == ""){
+        CellColumnInsert_ProfileImage.setValue(GenericProfileImage);
+      };
+      
+      //Update the Complete Address Column. Concatenates parts of the address to create a complete address used for getting location info and directions.     
+      var ColumnAddress = "K";
+      var ColumnCity = "L";
+      var ColumnState = "M";
+      var ColumnZip = "N";
+      var CellColumn_CompleteAddress = 15
+      var CellColumnInsert_CompleteAddress = selectedCell.offset(0,CellColumn_CompleteAddress-1);
+      var RowNumber = active_range.getRow();
+      var newAddress = "=concatenate("+ColumnAddress+RowNumber+",\", \","+ColumnCity+RowNumber+",\", \","+ColumnState+RowNumber+",\" \","+ColumnZip+RowNumber+")";
+      if(CellColumnInsert_CompleteAddress.isBlank() && ValueOfFirstColCell !== ""){
+         CellColumnInsert_CompleteAddress.setValue(newAddress);
+        };
+
+      // Add category reference title formula to the cell
+      var CellColumn_CellToAddRefGroupTitleTo = 23
+      var CellColumn_LetterofCategoryColumntoReference = "D";
+      var FormulaReferenceGroup = "="+CellColumn_LetterofCategoryColumntoReference+RowNumber;
+      var CellAddRefGroupFormula = selectedCell.offset(0,CellColumn_CellToAddRefGroupTitleTo-1); 
+      if(CellAddRefGroupFormula.isBlank() && ValueOfFirstColCell !== ""){
+        CellAddRefGroupFormula.setValue(FormulaReferenceGroup);
+        };
+
+};
+  
+}
