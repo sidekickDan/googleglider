@@ -1,0 +1,48 @@
+/*          CUSTOM FUNCTIONS                  */
+
+// FUNCTION addUniqueIdColumn
+// Purpose - When a record is created, add a unique ID to the table. This ID is based on a date/time stamp. Since time doesn't repeat itself, this makes for a pretty good unique identifier.
+// Parameters - "Sheet Name", "String added in front of date", "Column where Unique ID should be written"
+
+function addUniqueIdColumn(SheetToTarget,PretextBeforeDate,ColumnUniqueID,ColNotNull) {
+      
+  var sheetVals = [ 
+              [SheetToTarget,
+               PretextBeforeDate,
+               ColumnUniqueID,
+               ColNotNull
+              ] 
+  ];
+  
+ 
+  var SheetWithValuesToMod = SpreadsheetApp.getActiveSpreadsheet();
+  var SheetToMod = SheetWithValuesToMod.getActiveSheet();
+  
+  //Loop through every sheet value
+  for(var i = 0; i < sheetVals.length; i++){
+    var sheetID  = sheetVals[i][0],
+        frontStr = sheetVals[i][1],
+        IDcol  = sheetVals[i][2],
+        ColNotNull  = sheetVals[i][3]
+    
+    var offset = IDcol - 1;
+    
+    if(SheetToMod.getName() === sheetID){
+      var date = new Date().valueOf();
+      var newID = frontStr+date;   
+      
+      //Check the location of the active cell row
+      var active_range = SheetToMod.getActiveRange();
+      var selectedCell = SheetToMod.getRange(active_range.getRowIndex(), 1);
+      var CellNotNull = selectedCell.offset(0,ColNotNull-1);
+      var ValueOfCellNotNull = CellNotNull.getValue()
+      
+      //Update the ID Column Cell with Unique ID generated
+      var UpdateIDColumnCell = selectedCell.offset(0,offset);
+      if(UpdateIDColumnCell.isBlank() && ValueOfCellNotNull !== ""){
+       UpdateIDColumnCell.setValue(newID);
+      };        
+      
+    };
+  };
+}
