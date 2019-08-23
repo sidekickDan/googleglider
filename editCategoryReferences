@@ -1,0 +1,42 @@
+// FUNCTION editCategoryReferences 
+// Purpose - Add important values and calculations when reference tables are modified CRUD style.
+// Parameters - Sheet with records to modify, Sheet and column of the conditional, Cell to add count formula, Cell to add reference value for Glide grouping
+
+function editCategoryReferences(SheetName,ConditionalRange,CelltoAddCountFormulaTo,CellToAddRefGroupTitleTo) {
+  
+  // specify the sheet to work with
+  var SheetToMod = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SheetName);
+  var NumberOfRows = SheetToMod.getLastRow();
+  
+  //Loop through every sheet value
+  for(var i = 0; i < NumberOfRows; i++){
+      
+      // Get the active cell row
+      var active_range = SheetToMod.getActiveRange();
+      var selectedCell = SheetToMod.getRange(active_range.getRowIndex(), 1);
+      // Get the value of the first cell in the row for comparing
+      var FirstColumOfActiveRow = selectedCell.offset(0,0);
+      var ValueOfFirstColCell = FirstColumOfActiveRow.getValue()
+      // Get the active row number for the formulas      
+      var RowNumber = active_range.getRow();
+      // The formula for counting the total records belonging to categories existing in main db sheet
+      var FormulaCount = "=countif("+ConditionalRange+",A"+RowNumber+")";
+      // The formula for adding the category title to column used for Glide Reference Lists
+      // ... main category title for reference should exist in first column, A.
+      var FormulaReferenceGroup = "=(A"+RowNumber+")";
+      
+      // Add count formula to the cell
+      var CellAddCountFormula = selectedCell.offset(0,CelltoAddCountFormulaTo-1); 
+      if(CellAddCountFormula.isBlank() && ValueOfFirstColCell !== ""){
+        CellAddCountFormula.setValue(FormulaCount);
+        };
+
+      // Add category reference title formula to the cell
+      var CellAddRefGroupFormula = selectedCell.offset(0,CellToAddRefGroupTitleTo-1); 
+      if(CellAddRefGroupFormula.isBlank() && ValueOfFirstColCell !== ""){
+        CellAddRefGroupFormula.setValue(FormulaReferenceGroup);
+        };
+       
+
+  };
+}
