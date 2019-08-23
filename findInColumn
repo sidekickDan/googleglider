@@ -1,0 +1,57 @@
+/*      FUNCTION TO CHANGE DB SHEET COLUMN VALUES TO UNCATEGORIZED IF REFERENCE SHEET VALUES ARE DELETED SO THAT THEY DO NOT GET LOST AND NOT DISPLAYED AT LEAST SOME CATEGORY GROUP.    */
+// seems like it works when i manually edit the Interest sheet, but doesn't seem to be 
+// triggered when the Reference Sheet for languages is editted. Plus it seems like sometimes
+// the array values get cached and it makes the value comparison based what was in the array
+// before i deleted it from the reference list.
+
+function findInColumn(SheetName,ReferenceSheet,columnSheet,columnReference) {
+  
+
+  
+     // for every row in the main db sheet, check the column referenced to see if the value exists in the 
+     //  reference sheet column. if not, change value to uncategorized. If exists, leave alone.
+        var SheetReference = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ReferenceSheet);
+  var ReferenceColumn = SheetReference.getRange(columnReference + ":" + columnReference);
+  var ReferenceColumnValues = ReferenceColumn.getValues();
+  // specify the sheet to work with
+  var SheetToMod = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SheetName); 
+  var NumberofRows = SheetToMod.getLastRow();
+
+
+ 
+             // check if value of certain column exists in reference sheet column array. if so... if not....
+        var SheetToMod = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SheetName);     
+        var active_range = SheetToMod.getActiveRange();
+        var selectedCell = SheetToMod.getRange(active_range.getRowIndex(), 1);
+        var CellToMod = selectedCell.offset(0,columnSheet-1);
+        var SheetToModColumnValue = CellToMod.getValue();
+        var testValue = selectedCell.offset(0,columnSheet-4);
+        var testValueColumnValue = testValue.getValue();
+        var arrayNumberValue = ReferenceColumnValues.indexOf(SheetToModColumnValue);
+
+    var enrollmentData = ReferenceColumnValues;
+    var enrollmentDataFlat = enrollmentData.map(function(row) {return row[0];});
+    
+  
+  //Loop through every sheet value
+  for(var i = 0; i < NumberofRows; i++){
+    
+ 
+   
+    if (enrollmentDataFlat.indexOf(SheetToModColumnValue) != -1) {
+    // it's there 
+      enrollmentDataFlat.length = 0;
+      ReferenceColumnValues.length = 0;
+}
+else {
+   // not there
+  CellToMod.setValue("Uncategorized");
+  enrollmentDataFlat.length = 0;
+  ReferenceColumnValues.length = 0;
+}
+    return;
+ 
+    
+      };
+    
+}
