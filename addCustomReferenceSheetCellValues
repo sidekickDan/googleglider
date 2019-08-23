@@ -1,0 +1,36 @@
+function addCustomReferenceSheetCellValues(SheetName){
+
+  // specify the sheet to work with
+  var SheetToMod = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SheetName);
+  var NumberOfRows = SheetToMod.getLastRow();
+  
+  //Loop through every sheet value
+  for(var i = 0; i < NumberOfRows; i++){
+      
+      // Get the active cell row
+      var active_range = SheetToMod.getActiveRange();
+      var selectedCell = SheetToMod.getRange(active_range.getRowIndex(), 1);
+      // Get the value of the first cell in the row for comparing
+      var FirstColumOfActiveRow = selectedCell.offset(0,0);
+      var ValueOfFirstColCell = FirstColumOfActiveRow.getValue()
+      // Get the active row number for the formulas      
+      var RowNumber = active_range.getRow();
+       
+      
+      //Update the Complete Address Column. Concatenates parts of the address to create a complete address used for getting location info and directions.     
+      var ColumnAddress = "B";
+      var ColumnCity = "C";
+      var ColumnState = "D";
+      var ColumnZip = "E";
+      var CellColumn_CompleteAddress = 6
+      var CellColumnInsert_CompleteAddress = selectedCell.offset(0,CellColumn_CompleteAddress-1);
+      var RowNumber = active_range.getRow();
+      var newAddress = "=concatenate("+ColumnAddress+RowNumber+",\", \","+ColumnCity+RowNumber+",\", \","+ColumnState+RowNumber+",\" \","+ColumnZip+RowNumber+")";
+      if(CellColumnInsert_CompleteAddress.isBlank() && ValueOfFirstColCell !== ""){
+         CellColumnInsert_CompleteAddress.setValue(newAddress);
+        };
+
+
+};
+  
+}
