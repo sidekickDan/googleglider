@@ -1,0 +1,10 @@
+/*    Utility Function to convert column index number to it's corresponding letter for constructing getRange parameters    */
+
+function convertColumnIndexToLetter(columnIndex) {
+ // columnIndex - Column number you're interested in converting to it's letter range.
+ var ss = SpreadsheetApp.getActiveSpreadsheet();
+ var sheet = ss.getSheets()[0];
+ var column = sheet.getRange(1, columnIndex, 1, 1);
+ var columnLetter = column.getA1Notation().match(/([A-Z]+)/)[0]; 
+ return columnLetter;
+}
