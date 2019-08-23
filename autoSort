@@ -1,0 +1,52 @@
+/*      FUNCTION to automatically sort selected sheet by Columns     */
+
+function autoSort(SheetToSort,SortFieldOne,SortFieldOneType,SortFieldOneDir,SortFieldTwo,SortFieldTwoType,SortFieldTwoDir,NumColHeaders) {
+   
+     var ss = SpreadsheetApp.getActiveSpreadsheet();
+     var sh0 = ss.getSheetByName(SheetToSort);
+     var SheetToTarget = sh0;      
+     var NumHeaderRows = NumColHeaders;
+     var FirstColumnToSortBy = SortFieldOne;
+     var SecondColumnToSortBy = SortFieldTwo;
+     var SetDateFormat = "dddd m/dd/yyyy h:mm am/pm";
+     if (SortFieldOneDir == "Asc") {
+          var FirstColumnToSortByDir = true;
+          }else{
+          var FirstColumnToSortByDir = false;
+          };
+     if (SortFieldTwoDir == "Asc") {
+          var SecondColumnToSortByDir = true;
+          }else{
+          var SecondColumnToSortByDir = false;
+          };
+     if (SortFieldOneType == "Date") {
+          var DateColumnLetter = convertColumnIndexToLetter(FirstColumnToSortBy);  
+          var DateColumnRange = SheetToSort+"!"+DateColumnLetter+NumColHeaders+":"+DateColumnLetter;
+          var cell = SheetToTarget.getRange(DateColumnRange);
+          cell.setNumberFormat(SetDateFormat);
+          };
+     if (SortFieldTwoType == "Date") {
+          var DateColumnLetter = convertColumnIndexToLetter(SecondColumnToSortBy);  
+          var DateColumnRange = SheetToSort+"!"+DateColumnLetter+NumColHeaders+":"+DateColumnLetter; 
+          var cell = SheetToTarget.getRange(DateColumnRange);
+       SpreadsheetApp.getActiveSheet().getRange(DateColumn);
+          cell.setNumberFormat(SetDateFormat);
+          };
+
+ // Get the entire set of data for this sheet.
+  var range = SheetToTarget.getDataRange();
+  
+  // Then, if there are any header rows, offset our range to remove them from it; otherwise, they will end up being sorted as well.
+  if (NumHeaderRows > 0) {
+    // Setting the second parameter of offset() to 0 to prevents it from
+    // shifting any columns. Note that row headers wouldn't make much
+    // sense here, but this is where you would modify it if you
+    // wanted support for those as well.
+    range = range.offset(NumHeaderRows, 0);
+  }
+  
+  // Perform the actual sort.
+  range.sort([{column: FirstColumnToSortBy, ascending: FirstColumnToSortByDir},{column: SecondColumnToSortBy, ascending: SecondColumnToSortByDir}]);
+  
+  
+}
